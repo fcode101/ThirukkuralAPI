@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 import random
+from fastapi.responses import HTMLResponse
 
-# Global storage
 thirukkural = []
 english = []
 kannada = []
@@ -48,6 +48,45 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_items():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Thirukkural API Home</title>
+            <style>
+                body { font-family: sans-serif; margin: 40px; line-height: 1.6; }
+                pre { background: #f4f4f4; padding: 10px; border-radius: 5px; width: fit-content; }
+                a { color: #0066cc; text-decoration: none; }
+                a:hover { text-decoration: underline; }
+            </style>
+        </head>
+        <body>
+            <h1>Thirukkural API</h1>
+            <p>Navigate to <a href="/docs">/docs</a> to view the API documentation.</p>
+
+            <div>
+                <h2>Available Endpoints</h2>
+                <ul>
+                    <li><a href="/thirukkural/random">/thirukkural/random</a> - Random Thirukkural Verse</li>
+                    <li><a href="/thirukkural/1">/thirukkural/1</a> - Thirukkural Verse by ID (Example: 1)</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>Endpoint Formats</h2>
+                <p>Random Thirukkural Verse:</p>
+                <pre>/thirukkural/random</pre>
+                <p>Thirukkural Verse by ID:</p>
+                <pre>/thirukkural/{kural_id}</pre>
+            </div>
+        </body>
+    </html>
+    """
+
 
 
 @app.get("/health")
